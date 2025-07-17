@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Juego de Piedra, Papel o Tijera interactivo y visual">
+    <meta name="keywords" content="piedra, papel, tijera, juego, online, gratis">
+    <meta name="author" content="Tu Nombre">
+    <title>Piedra Papel Tijera - Juego Online</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        
+        .player-score, .pc-score {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 150px;
+        }
+        
+        .player-score {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .pc-score {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .game-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 40px 0;
+            min-height: 200px;
+        }
+        
+        .player-choice, .pc-choice {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .choice-display {
+            font-size: 8em;
+            margin: 20px 0;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .vs {
+            font-size: 3em;
+            font-weight: bold;
+            color: #666;
+            margin: 0 20px;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .choice-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .choice-btn {
+            font-size: 4em;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .choice-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .choice-btn:active {
+            transform: translateY(0);
+        }
+        
+        .choice-btn.selected {
+            animation: jumpSplash 0.6s ease-out;
+            transform: scale(1.2);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        
+        @keyframes jumpSplash {
+            0% { transform: scale(1) translateY(0); }
+            25% { transform: scale(1.3) translateY(-20px); }
+            50% { transform: scale(1.4) translateY(-30px); }
+            75% { transform: scale(1.2) translateY(-10px); }
+            100% { transform: scale(1.2) translateY(0); }
+        }
+        
+        .choice-display.animate {
+            animation: choiceReveal 0.8s ease-out;
+        }
+        
+        @keyframes choiceReveal {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+        
+        .splash-effect {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .splash-1 {
+            background: radial-gradient(circle, rgba(255,193,7,0.8) 0%, rgba(255,193,7,0) 70%);
+            animation: splash1 0.6s ease-out;
+        }
+        
+        .splash-2 {
+            background: radial-gradient(circle, rgba(33,150,243,0.6) 0%, rgba(33,150,243,0) 70%);
+            animation: splash2 0.8s ease-out;
+        }
+        
+        .splash-3 {
+            background: radial-gradient(circle, rgba(156,39,176,0.4) 0%, rgba(156,39,176,0) 70%);
+            animation: splash3 1s ease-out;
+        }
+        
+        @keyframes splash1 {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        
+        @keyframes splash2 {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+        
+        @keyframes splash3 {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(5); opacity: 0; }
+        }
+        
+        .result.animate {
+            animation: resultPop 0.5s ease-out;
+        }
+        
+        @keyframes resultPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .controls {
+            position: relative;
+        }
+        
+        .rock { background: #ffcdd2; }
+        .paper { background: #c8e6c9; }
+        .scissors { background: #fff9c4; }
+        
+        .result {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .win { color: #4caf50; }
+        .lose { color: #f44336; }
+        .tie { color: #ff9800; }
+        
+        .reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .reset-btn:hover {
+            background: #1976d2;
+        }
+        
+        .game-over {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .game-over.win {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .game-over.lose {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+        
+        /* Responsivo para móviles */
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .choice-display {
+                font-size: 4em;
+            }
+            
+            .choice-btn {
+                font-size: 3em;
+                padding: 15px;
+            }
+            
+            .choice-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .game-area {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .vs {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 Piedra, Papel o Tijera 🎮</h1>
+        
+        <div class="scoreboard">
+            <div class="player-score">
+                <div>👤 TÚ</div>
+                <div id="playerScore">0</div>
+            </div>
+            <div class="pc-score">
+                <div>🤖 PC</div>
+                <div id="pcScore">0</div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="player-choice">
+                <h3>Tu elección:</h3>
+                <div class="choice-display" id="playerChoice">❓</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="pc-choice">
+                <h3>PC elige:</h3>
+                <div class="choice-display" id="pcChoice">❓</div>
+            </div>
+        </div>
+        
+        <div class="result" id="result">¡Elige tu jugada!</div>
+        
+        <div class="controls">
+            <div class="choice-buttons">
+                <button class="choice-btn rock" onclick="jugar(0)">🥌</button>
+                <button class="choice-btn paper" onclick="jugar(1)">📃</button>
+                <button class="choice-btn scissors" onclick="jugar(2)">✂️</button>
+            </div>
+            <button class="reset-btn" onclick="reiniciar()">🔄 Nuevo Juego</button>
+        </div>
+        
+        <div id="gameOver" class="game-over" style="display: none;"></div>
+    </div>
+
+    <script>
+        const opciones = ["🥌", "📃", "✂️"];
+        const nombres = ["Piedra", "Papel", "Tijera"];
+        let triunfos = 0;
+        let perdidas = 0;
+        
+        function jugar(jugador) {
+            if (triunfos >= 3 || perdidas >= 3) return;
+            
+            const botones = document.querySelectorAll('.choice-btn');
+            botones.forEach(btn => btn.classList.remove('selected'));
+            botones[jugador].classList.add('selected');
+            
+            crearSplash(botones[jugador]);
+            
+            const pc = Math.floor(Math.random() * 3);
+            
+            setTimeout(() => {
+                const playerChoiceEl = document.getElementById('playerChoice');
+                const pcChoiceEl = document.getElementById('pcChoice');
+                
+                playerChoiceEl.textContent = opciones[jugador];
+                pcChoiceEl.textContent = opciones[pc];
+                
+                playerChoiceEl.classList.add('animate');
+                pcChoiceEl.classList.add('animate');
+                
+                setTimeout(() => {
+                    playerChoiceEl.classList.remove('animate');
+                    pcChoiceEl.classList.remove('animate');
+                }, 800);
+            }, 200);
+            
+            let resultado = "";
+            let clase = "";
+            
+            if (jugador === pc) {
+                resultado = "¡EMPATE!";
+                clase = "tie";
+            } else if ((jugador === 0 && pc === 2) || (jugador === 1 && pc === 0) || (jugador === 2 && pc === 1)) {
+                resultado = "¡GANASTE!";
+                clase = "win";
+                triunfos++;
+            } else {
+                resultado = "¡PERDISTE!";
+                clase = "lose";
+                perdidas++;
+            }
+            
+            setTimeout(() => {
+                const resultElement = document.getElementById('result');
+                resultElement.textContent = resultado;
+                resultElement.className = `result ${clase} animate`;
+                
+                document.getElementById('playerScore').textContent = triunfos;
+                document.getElementById('pcScore').textContent = perdidas;
+                
+                setTimeout(() => {
+                    resultElement.classList.remove('animate');
+                }, 500);
+                
+                if (triunfos >= 3 || perdidas >= 3) {
+                    setTimeout(() => {
+                        mostrarGameOver();
+                    }, 300);
+                }
+            }, 600);
+            
+            setTimeout(() => {
+                botones[jugador].classList.remove('selected');
+            }, 600);
+        }
+        
+        function crearSplash(elemento) {
+            const rect = elemento.getBoundingClientRect();
+            const container = document.querySelector('.controls');
+            
+            for (let i = 1; i <= 3; i++) {
+                const splash = document.createElement('div');
+                splash.className = `splash-effect splash-${i}`;
+                splash.style.left = (rect.left + rect.width / 2 - 50) + 'px';
+                splash.style.top = (rect.top + rect.height / 2 - 50 - container.offsetTop) + 'px';
+                
+                container.appendChild(splash);
+                
+                setTimeout(() => {
+                    if (splash.parentNode) {
+                        splash.parentNode.removeChild(splash);
+                    }
+                }, 1000);
+            }
+        }
+        
+        function mostrarGameOver() {
+            const gameOverElement = document.getElementById('gameOver');
+            if (triunfos >= 3) {
+                gameOverElement.textContent = "🎉 ¡GANASTE LA PARTIDA! 🎉";
+                gameOverElement.className = "game-over win";
+            } else {
+                gameOverElement.textContent = "😢 ¡PERDISTE LA PARTIDA! 😢";
+                gameOverElement.className = "game-over lose";
+            }
+            gameOverElement.style.display = 'block';
+        }
+        
+        function reiniciar() {
+            triunfos = 0;
+            perdidas = 0;
+            document.getElementById('playerScore').textContent = '0';
+            document.getElementById('pcScore').textContent = '0';
+            document.getElementById('playerChoice').textContent = '❓';
+            document.getElementById('pcChoice').textContent = '❓';
+            document.getElementById('result').textContent = '¡Elige tu jugada!';
+            document.getElementById('result').className = 'result';
+            document.getElementById('gameOver').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
